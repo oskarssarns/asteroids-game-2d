@@ -10,3 +10,4 @@ Feel free to check it out.
 - <b> Game Screenshots </b>
 
 <img src="https://github.com/sharns/asteroids-game-2d/blob/main/Visual/1.png" />
+<img src="https://github.com/sharns/asteroids-game-2d/blob/main/Visual/2.png" />
