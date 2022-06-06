@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
+using System.Collections;
 
 public class GameManagerScript : MonoBehaviour
 {
@@ -108,6 +110,7 @@ public class GameManagerScript : MonoBehaviour
 
     private void GameOver()
     {
+        StartCoroutine(PostHighScore());
         FindObjectOfType<AudioManager>().Play("GameOver");
         GameOverText.text = "GAME OVER!";
         TotalScore.text = $"TOTAL SCORE : {Score}";
@@ -122,8 +125,33 @@ public class GameManagerScript : MonoBehaviour
 
     public void NextLevel()
     {
+        StartCoroutine(PostHighScore());
         FindObjectOfType<AudioManager>().Play("WinSound");
         Winner.text = "YOU WIN !";
         TotalScore.text = $"TOTAL SCORE : {Score}";
+    }
+
+    IEnumerator PostHighScore()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("nickname", "someNickname");
+        form.AddField("event_date", System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+        form.AddField("score", Score);
+        form.AddField("game", Application.productName);
+        form.AddField("game_version", Application.version);
+
+        using (UnityWebRequest www = UnityWebRequest.Post("http://www.gachi.run:8080/record_high_score", form))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                Debug.Log(www.downloadHandler.text);
+            }
+        }
     }
 }
